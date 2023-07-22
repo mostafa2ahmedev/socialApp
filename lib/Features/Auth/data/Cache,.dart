@@ -1,0 +1,18 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
+class Cache {
+  static late SharedPreferences sharedPreferences;
+
+  static Future init() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+  }
+
+  static Future<bool> saveData(
+      {required String key, required String value}) async {
+    return await sharedPreferences.setString(key, value);
+  }
+
+  static String? getData({required String key}) {
+    return sharedPreferences.getString(key);
+  }
+}
