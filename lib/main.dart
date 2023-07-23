@@ -1,65 +1,42 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebasepro/Features/Auth/data/Cache,.dart';
-
-import 'package:firebasepro/Features/Auth/presenataion/views/AuthHome/AuthView.dart';
 import 'package:firebasepro/Features/Feeds/presentation/Manger/HomeCubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'core/BlocObserver.dart';
+import 'Features/Auth/presenataion/views/loginview/loginview.dart';
+import 'Features/Feeds/presentation/Views/HomeView.dart';
+import 'core/BeforeRunApp.dart';
+import 'core/constants.dart';
 
 void main() async {
   await beforeRunApp();
 
-  // Widget widget;
-  // if (uId != null) {
-  //   widget = const HomeView();
-  // } else {
-  //   widget = const LoginView();
-  // }
+  Widget widget;
+  if (uId != null) {
+    widget = const HomeView();
+  } else {
+    widget = const LoginView();
+  }
 
-  runApp(const FireBasePro(
-      // startWidget: widget,
-      ));
+  runApp(FireBasePro(
+    startWidget: widget,
+  ));
 }
 
 class FireBasePro extends StatelessWidget {
   const FireBasePro({
     super.key,
+    required this.startWidget,
   });
-  // final Widget startWidget;
+  final Widget startWidget;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeCubit()
-        ..getUserData()
-        ..getPostData(),
-      child: const MaterialApp(
+      create: (context) => HomeCubit()..getUserData(),
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: AuthView(),
+        home: startWidget,
       ),
     );
   }
-}
-
-Future beforeRunApp() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  // Future<void> _firebaseMessagingBackgroundHandler(
-  //     RemoteMessage message) async {}
-  // FirebaseMessaging.onMessageOpenedApp.listen((event) {
-  //   print('ايوه هنا');
-  //   print(event.data.toString());
-  // });
-  // FirebaseMessaging.onMessage.listen((event) {
-  //   print(event.data.toString());
-  //   print('la هنا');
-  // });
-  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  await Firebase.initializeApp();
-  Bloc.observer = MyBlocObserver();
-  await Cache.init();
-
-  // uId = Cache.getData(key: 'uId');
 }

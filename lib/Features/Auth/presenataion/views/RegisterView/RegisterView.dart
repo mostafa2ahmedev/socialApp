@@ -1,3 +1,4 @@
+import 'package:firebasepro/Features/Auth/data/AuthService.dart';
 import 'package:firebasepro/Features/Auth/presenataion/Manger/AuthCubit.dart';
 import 'package:firebasepro/Features/Auth/presenataion/views/RegisterView/widgets/RegisterViewBody.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class RegisterView extends StatelessWidget {
       },
       child: Scaffold(
         body: BlocProvider(
-          create: (context) => AuthCubit(),
+          create: (context) => AuthCubit(AuthService()),
           child: RegisterViewBody(),
         ),
       ),

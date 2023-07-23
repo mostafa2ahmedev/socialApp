@@ -41,6 +41,9 @@ class TextFormFieldAuth extends StatelessWidget {
         hintText: hinttext,
         prefixIcon: Icon(preicon),
         suffixIcon: GestureDetector(onTap: ontap, child: Icon(suficon)),
+        focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: const BorderSide(color: Colors.red)),
         errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: const BorderSide(color: Colors.red)),

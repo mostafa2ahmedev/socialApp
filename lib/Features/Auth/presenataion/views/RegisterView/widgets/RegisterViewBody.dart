@@ -39,7 +39,7 @@ class RegisterViewBody extends StatelessWidget {
           GlobalMethod.showSnakeBar(
             context,
             text: state.error,
-            backGroundColor: Colors.green,
+            backGroundColor: Colors.red,
           );
         }
       },

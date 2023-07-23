@@ -36,6 +36,8 @@ class RegisterFailureState extends AuthStates {
 
 //////////////////////////
 ////////////////////////
+class CreateUserLoadingState extends AuthStates {}
+
 class CreateUserSuccessState extends AuthStates {}
 
 class CreateUserFailureState extends AuthStates {
