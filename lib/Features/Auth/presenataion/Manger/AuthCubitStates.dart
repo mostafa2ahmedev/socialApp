@@ -1,10 +1,13 @@
 abstract class AuthStates {}
 
-// class ChangeAutoValidatorMode extends AuthStates {}
+class AuthInitialState extends AuthStates {}
+
+/////////////////////
+////////////////////
 class ChangeVisibilityMode extends AuthStates {}
 
-class LoginInitialState extends AuthStates {}
-
+///////////////////
+/////////////////
 class LoginLoadingState extends AuthStates {}
 
 class LoginSuccessState extends AuthStates {
@@ -19,6 +22,8 @@ class LoginFailureState extends AuthStates {
   LoginFailureState(this.error);
 }
 
+///////////////////////////////
+/////////////////////////
 class RegisterLoadingState extends AuthStates {}
 
 class RegisterSuccessState extends AuthStates {}
@@ -29,6 +34,8 @@ class RegisterFailureState extends AuthStates {
   RegisterFailureState(this.error);
 }
 
+//////////////////////////
+////////////////////////
 class CreateUserSuccessState extends AuthStates {}
 
 class CreateUserFailureState extends AuthStates {

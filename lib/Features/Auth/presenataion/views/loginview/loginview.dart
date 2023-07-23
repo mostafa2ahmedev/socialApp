@@ -8,10 +8,15 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocProvider(
-        create: (context) => AuthCubit(),
-        child: LoginViewBody(),
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: Scaffold(
+        body: BlocProvider(
+          create: (context) => AuthCubit(),
+          child: LoginViewBody(),
+        ),
       ),
     );
   }

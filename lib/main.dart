@@ -1,12 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebasepro/Features/Auth/data/Cache,.dart';
-import 'package:firebasepro/Features/Auth/presenataion/Manger/BlocObserver.dart';
-import 'package:firebasepro/Features/Auth/presenataion/views/loginview/loginview.dart';
+
+import 'package:firebasepro/Features/Auth/presenataion/views/AuthHome/AuthView.dart';
 import 'package:firebasepro/Features/Feeds/presentation/Manger/HomeCubit.dart';
-import 'package:firebasepro/Features/Feeds/presentation/Views/HomeView.dart';
-import 'package:firebasepro/core/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'core/BlocObserver.dart';
 
 void main() async {
   await beforeRunApp();
@@ -37,7 +37,7 @@ class FireBasePro extends StatelessWidget {
         ..getPostData(),
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: LoginView(),
+        home: AuthView(),
       ),
     );
   }

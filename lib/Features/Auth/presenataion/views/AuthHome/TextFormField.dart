@@ -12,6 +12,7 @@ class TextFormFieldAuth extends StatelessWidget {
     this.ontap,
     this.obscureText = false,
     required this.keyboardType,
+    required this.label,
   });
 
   final Function(String?)? onSaved;
@@ -23,6 +24,7 @@ class TextFormFieldAuth extends StatelessWidget {
   final VoidCallback? ontap;
   final bool obscureText;
   final TextInputType keyboardType;
+  final String label;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -32,11 +34,22 @@ class TextFormFieldAuth extends StatelessWidget {
       validator: validator,
       onSaved: onSaved,
       decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 15,
+        ),
+        label: Text(label),
         hintText: hinttext,
         prefixIcon: Icon(preicon),
         suffixIcon: GestureDetector(onTap: ontap, child: Icon(suficon)),
-        enabledBorder: const OutlineInputBorder(),
-        focusedBorder: const OutlineInputBorder(),
+        errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: const BorderSide(color: Colors.red)),
+        enabledBorder:
+            OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(color: Colors.blue),
+        ),
       ),
     );
   }

@@ -7,15 +7,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/UserModel.dart';
 
 class AuthCubit extends Cubit<AuthStates> {
-  AuthCubit() : super(LoginInitialState());
+  AuthCubit() : super(AuthInitialState());
   static AuthCubit get(context) => BlocProvider.of(context);
-  // AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
+
   IconData visibility = Icons.visibility_off;
   bool isVisibility = true;
-  // void changeValidatorMode({AutovalidateMode? a}) {
-  //   autovalidateMode = a!;
-  //   emit(ChangeAutoValidatorMode());
-  // }
 
   void changeVisibilityMode() {
     // كنا ممكن نعملها بطريقه تانيه عن طريق متغير واحد بس ترو وفولس
@@ -42,9 +38,6 @@ class AuthCubit extends Cubit<AuthStates> {
         emit(RegisterSuccessState());
         userCreate(
             email: email, name: name, phone: phone, uId: value.user!.uid);
-
-        print(value.user!.email);
-        print(value.user!.uid);
       },
     ).catchError(
       (error) {
@@ -53,19 +46,16 @@ class AuthCubit extends Cubit<AuthStates> {
     );
   }
 
-  void userLogin(
-      {required String name,
-      required String email,
-      required String password,
-      required String phone}) {
+  void userLogin({
+    required String password,
+    required String email,
+  }) {
     emit(LoginLoadingState());
     FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password)
         .then(
       (value) {
         emit(LoginSuccessState(value.user!.uid));
-        print(value.user!.email);
-        print(value.user!.uid);
       },
     ).catchError(
       (error) {
