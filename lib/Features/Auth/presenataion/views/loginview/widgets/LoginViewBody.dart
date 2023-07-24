@@ -3,12 +3,12 @@ import 'package:firebasepro/Features/Auth/presenataion/Manger/AuthCubitStates.da
 import 'package:firebasepro/Features/Auth/presenataion/views/AuthHome/AuthButton.dart';
 
 import 'package:firebasepro/Features/Auth/presenataion/views/AuthHome/TextFormField.dart';
-import 'package:firebasepro/Features/Feeds/presentation/Views/HomeView.dart';
 import 'package:firebasepro/core/globalMethods.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../core/Clipper.dart';
+import '../../../../../Home/presentation/Views/HomeView.dart';
 import '../../../../data/Cache,.dart';
 import '../../AuthHome/HaveAccountOrNot.dart';
 import '../../RegisterView/RegisterView.dart';
@@ -22,7 +22,12 @@ class LoginViewBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthStates>(
       listener: (context, state) {
-        if (state is LoginSuccessState) {
+        if (state is LoginFailureState) {
+          GlobalMethod.showSnakeBar(context,
+              text: state.error, backGroundColor: Colors.red);
+        }
+        if (AuthCubit.get(context).isLogin == true &&
+            state is LoginSuccessState) {
           Cache.saveData(key: 'uId', value: state.uId).then(
             (value) {
               GlobalMethod.navigatoReb(context, view: const HomeView());
@@ -30,11 +35,10 @@ class LoginViewBody extends StatelessWidget {
           ).catchError(
             (error) {},
           );
-        }
-
-        if (state is LoginFailureState) {
-          GlobalMethod.showSnakeBar(context,
-              text: state.error, backGroundColor: Colors.red);
+        } else if (state is LoginSuccessState) {
+          emailcontroller.clear();
+          passwordcontroller.clear();
+          GlobalMethod.navigatoReb(context, view: const HomeView());
         }
       },
       builder: (context, state) {
@@ -128,8 +132,10 @@ class LoginViewBody extends StatelessWidget {
                             SizedBox(
                               width: 20,
                               child: Checkbox(
-                                value: true,
-                                onChanged: (value) {},
+                                value: cubit.isLogin,
+                                onChanged: (value) {
+                                  cubit.changeRemeberState();
+                                },
                               ),
                             ),
                             const SizedBox(
@@ -156,17 +162,13 @@ class LoginViewBody extends StatelessWidget {
                           height: 40,
                         ),
                         AuthButton(
-                          onpressed: () {
+                          onpressed: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
                             if (formKey.currentState!.validate()) {
-                              cubit.userLogin(
+                              await cubit.userLogin(
                                 email: emailcontroller.text,
                                 password: passwordcontroller.text,
                               );
-                              if (state is LoginSuccessState) {
-                                emailcontroller.clear();
-                                passwordcontroller.clear();
-                              }
                             }
                           },
                           child: state is LoginLoadingState

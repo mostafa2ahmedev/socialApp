@@ -10,7 +10,7 @@ class AuthCubit extends Cubit<AuthStates> {
   AuthService authService;
   IconData visibility = Icons.visibility_off;
   bool isVisibility = true;
-
+//////////////////////
   void changeVisibilityMode() {
     // كنا ممكن نعملها بطريقه تانيه عن طريق متغير واحد بس ترو وفولس
     // وهناك هنعمل كوندش الي هي ع الباراميتر نفسه  لو بترو  يبقي كذا ولو فولس يبقي كذا
@@ -23,6 +23,16 @@ class AuthCubit extends Cubit<AuthStates> {
     emit(ChangeVisibilityMode());
   }
 
+///////////////////////////
+  bool isLogin = false;
+
+  void changeRemeberState() {
+    isLogin = !isLogin;
+    print(isLogin);
+    emit(ChangeRemeberLoginState());
+  }
+
+//////////////////////
   void userRegister(
       {required String name,
       required String email,
@@ -30,7 +40,7 @@ class AuthCubit extends Cubit<AuthStates> {
       required String phone}) {
     emit(RegisterLoadingState());
     try {
-      authService.userRegister(
+      authService.userRegisterWithEmail(
           name: name, email: email, password: password, phone: phone);
       emit(RegisterSuccessState());
     } catch (error) {
@@ -38,15 +48,16 @@ class AuthCubit extends Cubit<AuthStates> {
     }
   }
 
-  void userLogin({
+//////////////////////
+  Future<void> userLogin({
     required String password,
     required String email,
   }) async {
     emit(LoginLoadingState());
 
     try {
-      var userCredential =
-          await authService.userLogin(password: password, email: email);
+      var userCredential = await authService.userLoginWithEmail(
+          password: password, email: email);
       print(userCredential.user!.uid);
       emit(LoginSuccessState(userCredential.user!.uid));
     } catch (error) {
@@ -54,6 +65,7 @@ class AuthCubit extends Cubit<AuthStates> {
     }
   }
 
+//////////////////////
   void userCreate({
     required String email,
     required String name,
@@ -68,6 +80,44 @@ class AuthCubit extends Cubit<AuthStates> {
       emit(CreateUserFailureState(e.toString()));
     }
   }
+
+//////////////////////////
+
+  void userLoginWithGmail() async {
+    emit(LoginLoadingGoogleState());
+    try {
+      var userCredential = await authService.userLoginWithGoogle();
+
+      userCreate(
+          email: userCredential.user!.email!,
+          name: userCredential.user!.displayName!,
+          phone: userCredential.user!.phoneNumber ?? 'null',
+          uId: userCredential.user!.uid);
+
+      emit(LoginSuccessCreateAcccountGoogleState(userCredential.user!.uid));
+    } catch (e) {
+      print(e.toString());
+      emit(LoginFailureGoogleState(e.toString()));
+    }
+  }
+
+  // void userLoginWithFacebook() async {
+  //   emit(LoginLoadingFacebookState());
+  //   try {
+  //     var userCredential = await authService.userLoginWithFacebook();
+
+  //     userCreate(
+  //         email: userCredential.user!.email!,
+  //         name: userCredential.user!.displayName!,
+  //         phone: userCredential.user!.phoneNumber ?? 'null',
+  //         uId: userCredential.user!.uid);
+
+  //     emit(LoginSuccessFacebookState(userCredential.user!.uid));
+  //   } catch (e) {
+  //     print(e.toString());
+  //     emit(LogingFailureacebookState(e.toString()));
+  //   }
+  // }
 }
 
 

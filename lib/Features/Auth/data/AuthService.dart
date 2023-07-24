@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'UserModel.dart';
 
 class AuthService {
   ///////////////
-  void userRegister(
+  void userRegisterWithEmail(
       {required String name,
       required String email,
       required String password,
@@ -23,7 +24,7 @@ class AuthService {
   }
 
 /////////////////////
-  Future<UserCredential> userLogin({
+  Future<UserCredential> userLoginWithEmail({
     required String password,
     required String email,
   }) async {
@@ -58,4 +59,25 @@ class AuthService {
         .doc(uId)
         .set(usermodel!.toMap());
   }
+
+/////////////////
+  Future<UserCredential> userLoginWithGoogle() async {
+    final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+
+    final GoogleSignInAuthentication gAuth = await gUser!.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+        accessToken: gAuth.accessToken, idToken: gAuth.idToken);
+
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  // Future<UserCredential> userLoginWithFacebook() async {
+  //   final LoginResult loginResult = await FacebookAuth.instance.login();
+
+  //   final OAuthCredential facebookAuthCredential =
+  //       FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+  //   return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+  // }
 }

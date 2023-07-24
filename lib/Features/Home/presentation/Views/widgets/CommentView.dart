@@ -1,4 +1,4 @@
-import 'package:firebasepro/Features/Feeds/presentation/Manger/HomeStates.dart';
+import 'package:firebasepro/Features/Home/presentation/Manger/HomeStates.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

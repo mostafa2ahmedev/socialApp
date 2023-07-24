@@ -1,4 +1,4 @@
-import 'package:firebasepro/Features/Feeds/presentation/Views/widgets/EditProfile.dart';
+import 'package:firebasepro/Features/Home/presentation/Views/widgets/EditProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icon_broken/icon_broken.dart';

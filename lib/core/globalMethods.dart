@@ -40,4 +40,46 @@ class GlobalMethod {
       ),
     );
   }
+
+  static showBottomSheet(BuildContext context,
+      {required TextEditingController phoneController,
+      required TextEditingController nameController}) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    decoration: const InputDecoration(
+                      labelText: 'Name',
+                    ),
+                    controller: nameController,
+                  ),
+                  TextField(
+                    decoration: const InputDecoration(
+                      labelText: 'phone',
+                    ),
+                    controller: phoneController,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Perform an action here
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Save'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:firebasepro/Features/Feeds/presentation/Views/widgets/TextFieldProfile.dart';
+import 'package:firebasepro/Features/Home/presentation/Views/widgets/TextFieldProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icon_broken/icon_broken.dart';
@@ -86,7 +86,7 @@ class EditProfile extends StatelessWidget {
                               ),
                               IconButton(
                                 onPressed: () async {
-                                  await HomeCubit.get(context)
+                                  HomeCubit.get(context)
                                       .getCoverImageFromGallary();
                                 },
                                 icon: const CircleAvatar(
@@ -116,7 +116,7 @@ class EditProfile extends StatelessWidget {
                             ),
                             IconButton(
                               onPressed: () async {
-                                await HomeCubit.get(context)
+                                HomeCubit.get(context)
                                     .getProfileImageFromGallary();
                               },
                               icon: const CircleAvatar(

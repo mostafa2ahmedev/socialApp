@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebasepro/Features/Auth/data/UserModel.dart';
-import 'package:firebasepro/Features/Feeds/data/ChatModel.dart';
-import 'package:firebasepro/Features/Feeds/data/CommentModel.dart';
-import 'package:firebasepro/Features/Feeds/data/PostModel.dart';
-import 'package:firebasepro/Features/Feeds/presentation/Manger/HomeStates.dart';
+import 'package:firebasepro/Features/Home/data/ChatModel.dart';
+import 'package:firebasepro/Features/Home/data/CommentModel.dart';
+import 'package:firebasepro/Features/Home/data/PostModel.dart';
+import 'package:firebasepro/Features/Home/presentation/Manger/HomeStates.dart';
 
-import 'package:firebasepro/Features/Feeds/presentation/Views/widgets/Settings.dart';
+import 'package:firebasepro/Features/Home/presentation/Views/widgets/Settings.dart';
 
 import 'package:firebasepro/core/constants.dart';
 import 'package:flutter/material.dart';

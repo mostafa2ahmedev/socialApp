@@ -1,5 +1,5 @@
-import 'package:firebasepro/Features/Feeds/presentation/Manger/HomeCubit.dart';
-import 'package:firebasepro/Features/Feeds/presentation/Views/widgets/CommentView.dart';
+import 'package:firebasepro/Features/Home/presentation/Manger/HomeCubit.dart';
+import 'package:firebasepro/Features/Home/presentation/Views/widgets/CommentView.dart';
 import 'package:flutter/material.dart';
 import 'package:icon_broken/icon_broken.dart';
 

@@ -1,5 +1,5 @@
-import 'package:firebasepro/Features/Feeds/presentation/Manger/HomeStates.dart';
-import 'package:firebasepro/Features/Feeds/presentation/Views/widgets/PostScreen.dart';
+import 'package:firebasepro/Features/Home/presentation/Manger/HomeStates.dart';
+import 'package:firebasepro/Features/Home/presentation/Views/widgets/PostScreen.dart';
 
 import 'package:firebasepro/core/Styles.dart';
 import 'package:flutter/material.dart';
