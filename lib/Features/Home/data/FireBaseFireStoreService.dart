@@ -4,14 +4,11 @@ import '../../../core/constants.dart';
 import '../../Auth/data/UserModel.dart';
 
 class FireBaseFireStoreService {
-  static void getUserData() {
-    UserModel? userModel;
-    FirebaseFirestore.instance.collection('users').doc(uId).get().then(
-      (value) {
-        userModel = UserModel.fromJson(value.data());
-      },
-    ).catchError(
-      (error) {},
-    );
+  static Future<UserModel> getUserData() async {
+    final snapshot =
+        await FirebaseFirestore.instance.collection('users').doc(uId).get();
+
+    return UserModel.fromJson(snapshot.data());
+    // طالما الي هيرجع هيبقي معتمد علي داتا لسه هتيجي اصلا ف المستقبل ف هوا كمان  لازم يكون فيوتشر عشان تستناه من هناك
   }
 }

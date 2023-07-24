@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:firebasepro/Features/Home/presentation/Views/widgets/TextFieldProfile.dart';
+import 'package:firebasepro/Features/Home/presentation/Views/Settings/EditProfileAppBar.dart';
+import 'package:firebasepro/Features/Home/presentation/Views/Settings/TextFieldProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icon_broken/icon_broken.dart';
@@ -25,33 +26,7 @@ class EditProfile extends StatelessWidget {
         nameController.text = usermodel.name!;
         bioController.text = usermodel.bio!;
         return Scaffold(
-          appBar: AppBar(
-            titleSpacing: 5,
-            title: const Text('Edit Profile'),
-            leading: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(IconBroken.Arrow___Left),
-            ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: TextButton(
-                  onPressed: () {
-                    HomeCubit.get(context).updateUser(
-                        name: nameController.text,
-                        phone: phoneController.text,
-                        bio: bioController.text);
-                  },
-                  child: const Text(
-                    'UPDATE',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              )
-            ],
-          ),
+          appBar: const EditProfileAppBar(),
           body: Padding(
             padding: const EdgeInsets.all(8.0),
             child: SingleChildScrollView(
@@ -201,6 +176,24 @@ class EditProfile extends StatelessWidget {
                       controller: phoneController,
                       iconData: IconBroken.Call,
                       label: 'Phone'),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 15),
+                    child: TextButton(
+                      onPressed: () {
+                        HomeCubit.get(context).updateUser(
+                            name: nameController.text,
+                            phone: phoneController.text,
+                            bio: bioController.text);
+                      },
+                      child: const Text(
+                        'UPDATE',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),

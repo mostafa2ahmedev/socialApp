@@ -5,12 +5,13 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebasepro/Features/Auth/data/UserModel.dart';
 import 'package:firebasepro/Features/Home/data/ChatModel.dart';
 import 'package:firebasepro/Features/Home/data/CommentModel.dart';
+import 'package:firebasepro/Features/Home/data/FireBaseFireStoreService.dart';
+import 'package:firebasepro/Features/Home/data/MobileService.dart';
 import 'package:firebasepro/Features/Home/data/PostModel.dart';
 import 'package:firebasepro/Features/Home/presentation/Manger/HomeStates.dart';
 
-import 'package:firebasepro/Features/Home/presentation/Views/widgets/Settings.dart';
+import 'package:firebasepro/Features/Home/presentation/Views/Settings/Settings.dart';
 
-import 'package:firebasepro/core/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -26,24 +27,8 @@ class HomeCubit extends Cubit<HomeStates> {
   static HomeCubit get(context) => BlocProvider.of(context);
 //////////////////////////////////////////
 /////////////////////////////////////////
-  UserModel? userModel;
+  var picker = ImagePicker();
 
-  void getUserData() {
-    emit(GetUserLoadingState());
-    FirebaseFirestore.instance.collection('users').doc(uId).get().then(
-      (value) {
-        userModel = UserModel.fromJson(value.data());
-        emit(GetUserSuccessState());
-      },
-    ).catchError(
-      (error) {
-        emit(GetUserFailureState(error.toString()));
-      },
-    );
-  }
-
-//////////////////////////////////////////
-/////////////////////////////////////////
   int currentIndex = 0;
   List<Widget> scareens = [
     const FeedsView(),
@@ -77,17 +62,27 @@ class HomeCubit extends Cubit<HomeStates> {
 
 //////////////////////////////////////////
 /////////////////////////////////////////
+  UserModel? userModel;
+
+  void getUserData() async {
+    try {
+      emit(GetUserLoadingState());
+      userModel = await FireBaseFireStoreService.getUserData();
+      emit(GetUserSuccessState());
+    } catch (e) {
+      emit(GetUserFailureState(e.toString()));
+    }
+  }
+
+//////////////////////////////////////////
+/////////////////////////////////////////
   File? profileImage;
-  var picker = ImagePicker();
 
-  Future<void> getProfileImageFromGallary() async {
-    final image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      profileImage = File(image.path);
-
+  void getProfileImageFromGallary() async {
+    try {
+      profileImage = await MobileService.getProfileImageFromGallary();
       emit(ChangeProfileImageSuccesstate());
-    } else {
+    } catch (e) {
       print('No image selected');
       emit(ChangeProfileImageFailurState());
     }
@@ -97,16 +92,13 @@ class HomeCubit extends Cubit<HomeStates> {
 /////////////////////////////////////////
   File? coverImage;
 
-  Future<void> getCoverImageFromGallary() async {
-    final image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      coverImage = File(image.path);
-
-      emit(ChangeProfileImageSuccesstate());
-    } else {
+  void getCoverImageFromGallary() async {
+    try {
+      coverImage = await MobileService.getProfileImageFromGallary();
+      emit(ChangeCoverImageSuccesstate());
+    } catch (e) {
       print('No image selected');
-      emit(ChangeProfileImageFailurState());
+      emit(ChangeCoverImageFailurState());
     }
   }
 
@@ -472,3 +464,41 @@ class HomeCubit extends Cubit<HomeStates> {
     // الستريم مفيهوش سكسس وايرور هي حاجه واحده لانه بيلسن جاب جاب مجابش مجابش
   }
 }
+  // void getUserData() {
+  //   emit(GetUserLoadingState());
+  //   FirebaseFirestore.instance.collection('users').doc(uId).get().then(
+  //     (value) {
+  //       userModel = UserModel.fromJson(value.data());
+  //       emit(GetUserSuccessState());
+  //     },
+  //   ).catchError(
+  //     (error) {
+  //       emit(GetUserFailureState(error.toString()));
+  //     },
+  //   );
+  // }
+  
+  // Future<void> getProfileImageFromGallary() async {
+  //   final image = await picker.pickImage(source: ImageSource.gallery);
+
+  //   if (image != null) {
+  //     profileImage = File(image.path);
+
+  //     emit(ChangeProfileImageSuccesstate());
+  //   } else {
+  //     print('No image selected');
+  //     emit(ChangeProfileImageFailurState());
+  //   }
+  // }
+  //   Future<void> getCoverImageFromGallary() async {
+  //   final image = await picker.pickImage(source: ImageSource.gallery);
+
+  //   if (image != null) {
+  //     coverImage = File(image.path);
+
+  //     emit(ChangeProfileImageSuccesstate());
+  //   } else {
+  //     print('No image selected');
+  //     emit(ChangeProfileImageFailurState());
+  //   }
+  // }
