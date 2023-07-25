@@ -9,6 +9,9 @@ class EditProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       titleSpacing: 5,
+      elevation: 0,
+      centerTitle: true,
+      backgroundColor: Colors.blueAccent,
       title: const Text('Edit Profile'),
       leading: IconButton(
         onPressed: () {

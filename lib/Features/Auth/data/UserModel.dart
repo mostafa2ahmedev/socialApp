@@ -3,7 +3,7 @@ class UserModel {
   String? email;
   String? phone;
   String? uId;
-  bool isEmailVerfied;
+  bool? isEmailVerfied;
   String? image;
   String? bio;
   String? cover;
@@ -12,7 +12,7 @@ class UserModel {
       this.name,
       this.phone,
       this.uId,
-      required this.isEmailVerfied,
+      this.isEmailVerfied,
       this.image,
       this.cover,
       this.bio});

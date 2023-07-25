@@ -13,18 +13,33 @@ class TextFieldProfile extends StatelessWidget {
   final String label;
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: TextInputType.name,
-      validator: validator,
-      decoration: InputDecoration(
-        label: Text(
-          label,
-          style: const TextStyle(fontSize: 18),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: TextFormField(
+        style: const TextStyle(color: Colors.blueGrey),
+        controller: controller,
+        keyboardType: TextInputType.name,
+        validator: validator,
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 10,
+          ),
+          fillColor: Colors.grey[200],
+          filled: true,
+          label: Text(
+            label,
+            style: const TextStyle(fontSize: 18, color: Colors.blueGrey),
+          ),
+          enabledBorder:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          focusedBorder:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          errorBorder:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          focusedErrorBorder:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          prefixIcon: Icon(iconData),
         ),
-        enabledBorder: const OutlineInputBorder(),
-        focusedBorder: const OutlineInputBorder(),
-        prefixIcon: Icon(iconData),
       ),
     );
   }

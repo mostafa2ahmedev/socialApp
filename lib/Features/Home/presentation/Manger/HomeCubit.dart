@@ -104,85 +104,61 @@ class HomeCubit extends Cubit<HomeStates> {
 
 //////////////////////////////////////////
 /////////////////////////////////////////
-  void uploadProfileImage({
-    required String name,
-    required String? phone,
-    required String? bio,
-  }) {
-    emit(UpdateUserLoadingState());
-    FirebaseStorage.instance
-        .ref()
-        .child('users/${Uri.file(profileImage!.path).pathSegments.last}')
-        .putFile(profileImage!)
-        .then((value) {
-      value.ref.getDownloadURL().then((value) {
-        // emit(UploadProfileImageSuccesstate());
+  void changeProfielImage() async {
+    emit(UploadImageLodaingState());
+    try {
+      var image = await FireBaseFireStoreService.uploadProfileImage(
+        profileImage: profileImage,
+      );
 
-        updateUser(name: name, phone: phone, bio: bio, image: value);
-      }).catchError((error) {
-        emit(UploeadProfileImageFailurState());
-      });
-    }).catchError((error) {
-      emit(UploeadProfileImageFailurState());
-    });
+      FireBaseFireStoreService.updateUser(image: image, userModel: userModel!);
+
+      userModel = await FireBaseFireStoreService.getUserData();
+
+      emit(UploadProfileImageSuccesstate());
+    } catch (e) {
+      emit(UploadProfileImageFailurState());
+    }
   }
 
 //////////////////////////////////////////
 /////////////////////////////////////////
+  void changeCoverImage() async {
+    emit(UploadImageLodaingState());
+    try {
+      var image = await FireBaseFireStoreService.uploadCoverImage(
+        coverImage: coverImage,
+      );
 
-  void uploadcoverImage({
-    required String name,
-    required String? phone,
-    required String? bio,
-  }) {
-    emit(UpdateUserLoadingState());
-    FirebaseStorage.instance
-        .ref()
-        .child('users/${Uri.file(coverImage!.path).pathSegments.last}')
-        .putFile(coverImage!)
-        .then((value) {
-      value.ref.getDownloadURL().then((value) {
-        emit(UploadCoverImageSuccesstate());
-
-        updateUser(name: name, phone: phone, bio: bio, cover: value);
-      }).catchError((error) {
-        emit(UploeadCoverImageFailurState());
-      });
-    }).catchError((error) {
-      emit(UploeadCoverImageFailurState());
-    });
+      FireBaseFireStoreService.updateUser(cover: image, userModel: userModel!);
+      userModel = await FireBaseFireStoreService.getUserData();
+      emit(UploadCoverImageSuccesstate());
+    } catch (e) {
+      emit(UploadCoverImageFailurState());
+    }
   }
 
 //////////////////////////////////////////
 /////////////////////////////////////////
-  void updateUser({
-    required String name,
-    required String? phone,
-    required String? bio,
-    String? cover,
-    String? image,
-  }) {
-    UserModel usermodel = UserModel(
-      name: name,
-      phone: phone,
-      bio: bio,
-      isEmailVerfied: false,
-      email: userModel!.email,
-      uId: userModel!.uId,
-      image: image ?? userModel!.image,
-      cover: cover ?? userModel!.cover,
-    );
+  void updateUserData(
+      {required String name,
+      required String bio,
+      required String phone}) async {
+    emit(UpdateUserLoadingState());
 
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(userModel!.uId)
-        .update(usermodel.toMap())
-        .then((value) {
-      getUserData();
-    }).catchError((error) {
+    try {
+      FireBaseFireStoreService.updateUser(
+          name: name, bio: bio, phone: phone, userModel: userModel);
+
+      userModel = await FireBaseFireStoreService.getUserData();
+      emit(UpdateUserSuccessState());
+    } catch (e) {
       emit(UpdateUserFailurState());
-    });
+    }
   }
+
+/////////////////////////////////////////
+/////////////////////////////////////////
 
   File? postImage;
 
@@ -464,6 +440,22 @@ class HomeCubit extends Cubit<HomeStates> {
     // الستريم مفيهوش سكسس وايرور هي حاجه واحده لانه بيلسن جاب جاب مجابش مجابش
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // void getUserData() {
   //   emit(GetUserLoadingState());
   //   FirebaseFirestore.instance.collection('users').doc(uId).get().then(
@@ -501,4 +493,79 @@ class HomeCubit extends Cubit<HomeStates> {
   //     print('No image selected');
   //     emit(ChangeProfileImageFailurState());
   //   }
+  // }
+  // void uploadProfileImage({
+  // required String name,
+  // required String? phone,
+  // required String? bio,
+  // }) {
+  //   emit(UpdateUserLoadingState());
+  //   FirebaseStorage.instance
+  //       .ref()
+  //       .child('users/${Uri.file(profileImage!.path).pathSegments.last}')
+  //       .putFile(profileImage!)
+  //       .then((value) {
+  //     value.ref.getDownloadURL().then((value) {
+  //       // emit(UploadProfileImageSuccesstate());
+
+  //       updateUser(name: name, phone: phone, bio: bio, image: value);
+  //     }).catchError((error) {
+  //       emit(UploeadProfileImageFailurState());
+  //     });
+  //   }).catchError((error) {
+  //     emit(UploeadProfileImageFailurState());
+  //   });
+  // }
+
+   // void uploadcoverImage({
+  //   required String name,
+  //   required String? phone,
+  //   required String? bio,
+  // }) {
+  //   emit(UpdateUserLoadingState());
+  //   FirebaseStorage.instance
+  //       .ref()
+  //       .child('users/${Uri.file(coverImage!.path).pathSegments.last}')
+  //       .putFile(coverImage!)
+  //       .then((value) {
+  //     value.ref.getDownloadURL().then((value) {
+  //       emit(UploadCoverImageSuccesstate());
+
+  //       updateUser(name: name, phone: phone, bio: bio, cover: value);
+  //     }).catchError((error) {
+  //       emit(UploeadCoverImageFailurState());
+  //     });
+  //   }).catchError((error) {
+  //     emit(UploeadCoverImageFailurState());
+  //   });
+  // }
+
+
+  // void updateUser({
+  //   required String name,
+  //   required String? phone,
+  //   required String? bio,
+  //   String? cover,
+  //   String? image,
+  // }) {
+  //   UserModel usermodel = UserModel(
+  //     name: name,
+  //     phone: phone,
+  //     bio: bio,
+  //     isEmailVerfied: false,
+  //     email: userModel!.email,
+  //     uId: userModel!.uId,
+  //     image: image ?? userModel!.image,
+  //     cover: cover ?? userModel!.cover,
+  //   );
+
+  //   FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(userModel!.uId)
+  //       .update(usermodel.toMap())
+  //       .then((value) {
+  //     getUserData();
+  //   }).catchError((error) {
+  //     emit(UpdateUserFailurState());
+  //   });
   // }

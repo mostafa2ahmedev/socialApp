@@ -24,15 +24,19 @@ class ChangeCoverImageSuccesstate extends HomeStates {}
 
 class ChangeCoverImageFailurState extends HomeStates {}
 
+class UploadImageLodaingState extends HomeStates {}
+
 class UploadProfileImageSuccesstate extends HomeStates {}
 
-class UploeadProfileImageFailurState extends HomeStates {}
+class UploadProfileImageFailurState extends HomeStates {}
 
 class UploadCoverImageSuccesstate extends HomeStates {}
 
-class UploeadCoverImageFailurState extends HomeStates {}
+class UploadCoverImageFailurState extends HomeStates {}
 
 class UpdateUserFailurState extends HomeStates {}
+
+class UpdateUserSuccessState extends HomeStates {}
 
 class UpdateUserLoadingState extends HomeStates {}
 

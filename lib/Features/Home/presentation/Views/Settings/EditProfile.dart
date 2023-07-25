@@ -14,6 +14,7 @@ class EditProfile extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeCubit, HomeStates>(
@@ -27,12 +28,12 @@ class EditProfile extends StatelessWidget {
         bioController.text = usermodel.bio!;
         return Scaffold(
           appBar: const EditProfileAppBar(),
-          body: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SingleChildScrollView(
+          body: SingleChildScrollView(
+            child: Form(
+              key: formKey,
               child: Column(
                 children: [
-                  if (state is UpdateUserLoadingState)
+                  if (state is UploadImageLodaingState)
                     const LinearProgressIndicator(),
                   SizedBox(
                     height: 190,
@@ -48,9 +49,6 @@ class EditProfile extends StatelessWidget {
                                 height: 140,
                                 width: double.infinity,
                                 decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(4),
-                                      topRight: Radius.circular(4)),
                                   image: DecorationImage(
                                       image: (coverImage == null)
                                           ? NetworkImage('${usermodel.cover}')
@@ -118,10 +116,7 @@ class EditProfile extends StatelessWidget {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  HomeCubit.get(context).uploadProfileImage(
-                                      name: nameController.text,
-                                      phone: phoneController.text,
-                                      bio: bioController.text);
+                                  HomeCubit.get(context).changeProfielImage();
                                 },
                                 child: const Text('Upload profile image'),
                               ),
@@ -142,10 +137,7 @@ class EditProfile extends StatelessWidget {
                             children: [
                               TextButton(
                                   onPressed: () {
-                                    HomeCubit.get(context).uploadcoverImage(
-                                        name: nameController.text,
-                                        phone: phoneController.text,
-                                        bio: bioController.text);
+                                    HomeCubit.get(context).changeCoverImage();
                                   },
                                   child: const Text('Upload Cover image')),
                               const SizedBox(
@@ -159,6 +151,12 @@ class EditProfile extends StatelessWidget {
                     ],
                   ),
                   TextFieldProfile(
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'plz enter your name ';
+                        }
+                        return null;
+                      },
                       controller: nameController,
                       iconData: IconBroken.User,
                       label: 'Name'),
@@ -166,13 +164,25 @@ class EditProfile extends StatelessWidget {
                     height: 20,
                   ),
                   TextFieldProfile(
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'plz enter your bio ';
+                        }
+                        return null;
+                      },
                       controller: bioController,
-                      iconData: IconBroken.Activity,
+                      iconData: IconBroken.Edit,
                       label: 'bio'),
                   const SizedBox(
                     height: 20,
                   ),
                   TextFieldProfile(
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'plz enter your phone ';
+                        }
+                        return null;
+                      },
                       controller: phoneController,
                       iconData: IconBroken.Call,
                       label: 'Phone'),
@@ -183,10 +193,12 @@ class EditProfile extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 15),
                     child: TextButton(
                       onPressed: () {
-                        HomeCubit.get(context).updateUser(
-                            name: nameController.text,
-                            phone: phoneController.text,
-                            bio: bioController.text);
+                        if (formKey.currentState!.validate()) {
+                          HomeCubit.get(context).updateUserData(
+                              name: nameController.text,
+                              phone: phoneController.text,
+                              bio: bioController.text);
+                        }
                       },
                       child: const Text(
                         'UPDATE',
