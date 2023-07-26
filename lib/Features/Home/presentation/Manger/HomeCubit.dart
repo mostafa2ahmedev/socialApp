@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebasepro/Features/Auth/data/UserModel.dart';
 import 'package:firebasepro/Features/Home/data/ChatModel.dart';
 import 'package:firebasepro/Features/Home/data/CommentModel.dart';
@@ -16,9 +15,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../Views/Post/PostScreen.dart';
 import '../Views/widgets/Chats.dart';
 import '../Views/widgets/Feeds.dart';
-import '../Views/widgets/PostScreen.dart';
 import '../Views/widgets/Users.dart';
 
 class HomeCubit extends Cubit<HomeStates> {
@@ -163,61 +162,12 @@ class HomeCubit extends Cubit<HomeStates> {
   File? postImage;
 
   Future<void> getpostImageFromGallary() async {
-    final image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      postImage = File(image.path);
-
-      emit(UploadPostImageSuccesstate());
-    } else {
-      print('No image selected');
-      emit(UploeadPostImageFailurState());
+    try {
+      postImage = await MobileService.getPostImageFromGallary();
+      emit(ChangePostImageSuccessState());
+    } catch (e) {
+      emit(ChangePostImageFailurState());
     }
-  }
-
-  void uploadPostImage({
-    required String dateTime,
-    required String postData,
-  }) {
-    emit(CreatePostLoadingState());
-
-    FirebaseStorage.instance
-        .ref()
-        .child('posts/${Uri.file(postImage!.path).pathSegments.last}')
-        .putFile(postImage!)
-        .then((value) {
-      value.ref.getDownloadURL().then((value) {
-        createPost(dateTime: dateTime, postData: postData, postImage: value);
-      }).catchError((error) {
-        emit(CreatePostFailureState());
-      });
-    }).catchError((error) {
-      emit(CreatePostFailureState());
-    });
-  }
-
-  void createPost({
-    required String dateTime,
-    required String postData,
-    String? postImage,
-  }) {
-    emit(CreatePostLoadingState());
-    PostModel postModel = PostModel(
-        name: userModel!.name,
-        uId: userModel!.uId,
-        image: userModel!.image,
-        dateTime: dateTime,
-        postData: postData,
-        postImage: postImage ?? 'empty');
-// الفرق بين  الست والادد ان الست بيشتغل ع الدوك معين ويحط تحته الداتا لكن الادد  بيعمل دوك عشوائي ويحط الداتا
-    FirebaseFirestore.instance
-        .collection('posts')
-        .add(postModel.toMap())
-        .then((value) {
-      emit(CreatePostSuccessState());
-    }).catchError((error) {
-      emit(CreatePostFailureState());
-    });
   }
 
   void removePostImage() {
@@ -225,57 +175,49 @@ class HomeCubit extends Cubit<HomeStates> {
     emit(RemovePostImage());
   }
 
+  void uploadPost({
+    required String dateTime,
+    required String postData,
+  }) async {
+    emit(CreatePostLoadingState());
+    try {
+      String? image;
+      if (postImage != null) {
+        image = await FireBaseFireStoreService.uploadPostImage(
+            postImage: postImage);
+      }
+
+      FireBaseFireStoreService.createPost(
+          dateTime: dateTime,
+          postData: postData,
+          postImage: image,
+          userModel: userModel!);
+
+      FireBaseFireStoreService.getPostData();
+      emit(CreatePostSuccessState());
+    } catch (e) {
+      emit(CreatePostFailureState());
+    }
+  }
+/////////////////////////////////
+////////////////////////////////
+
 ///////////////////////////////////////////
 /////////////////////////////////
-  List<PostModel>? posts = [];
-  List<String>? postsId = [];
-  List<int> likes = [];
-  // void getPostData() {
-  //   emit(GetPostLoadingState());
-  //   FirebaseFirestore.instance.collection('posts').get().then(
-  //     (value) {
-  //       for (var element in value.docs) {
-  //         element.reference.collection('Likes').get().then((value) {
-  //           likes.add(value.docs.length);
-  //           postsId!.add(element.id);
-  //           posts!.add(PostModel.fromJson(element.data()));
-  //         }).catchError(
-  //           (error) {
-  //             emit(GetPostFailureState(error.toString()));
-  //           },
-  //         );
-  //       }
-  //       emit(GetPostSuccessState());
-  //     },
-  //   ).catchError(
-  //     (error) {
-  //       print(error.toString());
-  //       emit(GetPostFailureState(error.toString()));
-  //     },
-  //   );
-  // }
-  void getPostData() {
-    emit(GetPostLoadingState());
-    FirebaseFirestore.instance.collection('posts').get().then((value) {
-      // Create a list of Futures that represent the async operations to wait for
-      final futures = value.docs.map((element) {
-        return element.reference.collection('Likes').get().then((value) {
-          likes.add(value.docs.length);
-          postsId!.add(element.id);
-          posts!.add(PostModel.fromJson(element.data()));
-        });
-      });
+  List<PostModel> posts = [];
 
-      // Wait for all the async operations to complete before emitting the success event
-      Future.wait(futures).then((_) {
-        emit(GetPostSuccessState());
-      });
-    }).catchError((error) {
-      print(error.toString());
-      emit(GetPostFailureState(error.toString()));
-    });
+  void getPostData() async {
+    emit(GetPostLoadingState());
+    try {
+      posts = await FireBaseFireStoreService.getPostData();
+      emit(GetPostSuccessState());
+    } catch (e) {
+      emit(GetPostFailureState(e.toString()));
+    }
   }
 
+  List<String>? postsId = [];
+  List<int> likes = [];
 ////////////////////////////////
 //////////////////////////////
   void likePosts({String? postId}) {
@@ -567,5 +509,94 @@ class HomeCubit extends Cubit<HomeStates> {
   //     getUserData();
   //   }).catchError((error) {
   //     emit(UpdateUserFailurState());
+  //   });
+  // }
+    // void uploadPostImage({
+  // required String dateTime,
+  // required String postData,
+  // }) {
+  //   emit(CreatePostLoadingState());
+
+  //   FirebaseStorage.instance
+  //       .ref()
+  //       .child('posts/${Uri.file(postImage!.path).pathSegments.last}')
+  //       .putFile(postImage!)
+  //       .then((value) {
+  //     value.ref.getDownloadURL().then((value) {
+  //       createPost(dateTime: dateTime, postData: postData, postImage: value);
+  //     }).catchError((error) {
+  //       emit(CreatePostFailureState());
+  //     });
+  //   }).catchError((error) {
+  //     emit(CreatePostFailureState());
+  //   });
+  // }
+
+//   void createPost({
+//     required String dateTime,
+//     required String postData,
+//     String? postImage,
+//   }) {
+//     emit(CreatePostLoadingState());
+//     PostModel postModel = PostModel(
+//         name: userModel!.name,
+//         uId: userModel!.uId,
+//         image: userModel!.image,
+//         dateTime: dateTime,
+//         postData: postData,
+//         postImage: postImage ?? 'empty');
+// // الفرق بين  الست والادد ان الست بيشتغل ع الدوك معين ويحط تحته الداتا لكن الادد  بيعمل دوك عشوائي ويحط الداتا
+//     FirebaseFirestore.instance
+//         .collection('posts')
+//         .add(postModel.toMap())
+//         .then((value) {
+//       emit(CreatePostSuccessState());
+//     }).catchError((error) {
+//       emit(CreatePostFailureState());
+//     });
+//   }
+  // void getPostData() {
+  //   emit(GetPostLoadingState());
+  //   FirebaseFirestore.instance.collection('posts').get().then(
+  //     (value) {
+  //       for (var element in value.docs) {
+  //         element.reference.collection('Likes').get().then((value) {
+  //           likes.add(value.docs.length);
+  //           postsId!.add(element.id);
+  //           posts!.add(PostModel.fromJson(element.data()));
+  //         }).catchError(
+  //           (error) {
+  //             emit(GetPostFailureState(error.toString()));
+  //           },
+  //         );
+  //       }
+  //       emit(GetPostSuccessState());
+  //     },
+  //   ).catchError(
+  //     (error) {
+  //       print(error.toString());
+  //       emit(GetPostFailureState(error.toString()));
+  //     },
+  //   );
+  // }
+  // void getPostData() {
+  //   emit(GetPostLoadingState());
+  //   FirebaseFirestore.instance.collection('posts').get().then((value) {
+  //     // Create a list of Futures that represent the async operations to wait for
+  //     final futures = value.docs.map((element) {
+  //       return element.reference.collection('Likes').get().then((value) {
+  //         likes.add(value.docs.length);
+  //         postsId!.add(element.id);
+  //         posts!.add(PostModel.fromJson(element.data()));
+  //       });
+  //     });
+
+  //     // Wait for all the async operations to complete before emitting the success event
+  //     Future.wait(futures).then((_) {
+  //       emit(GetPostSuccessState());
+  //     });
+  //   }).catchError((error) {
+  //     print(error.toString());
+  //     emit(GetPostFailureState(error.toString()));
   //   });
   // }

@@ -16,7 +16,7 @@ class FeedsView extends StatelessWidget {
       builder: (context, state) {
         var posts = HomeCubit.get(context).posts;
 
-        return posts!.isNotEmpty
+        return posts.isNotEmpty
             ? SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Column(

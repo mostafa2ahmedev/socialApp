@@ -162,7 +162,7 @@ class BuildPost extends StatelessWidget {
                               width: 5,
                             ),
                             Text(
-                              ' ${HomeCubit.get(context).likes[index]}',
+                              '1',
                               style: Theme.of(context).textTheme.bodySmall,
                             )
                           ],

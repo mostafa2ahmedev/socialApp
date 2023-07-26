@@ -48,9 +48,9 @@ class CreatePostSuccessState extends HomeStates {}
 class CreatePostFailureState extends HomeStates {}
 
 /////////  postImage/////////
-class UploadPostImageSuccesstate extends HomeStates {}
+class ChangePostImageSuccessState extends HomeStates {}
 
-class UploeadPostImageFailurState extends HomeStates {}
+class ChangePostImageFailurState extends HomeStates {}
 
 ///////////get post ////////////
 

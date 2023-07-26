@@ -15,16 +15,17 @@ class PostScreen extends StatelessWidget {
       },
       builder: (context, state) {
         var postImage = HomeCubit.get(context).postImage;
+        var userModel = HomeCubit.get(context).userModel;
         return Scaffold(
           appBar: AppBar(
             elevation: 0,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.blueAccent,
             title: const Text(
               'Create Post',
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(color: Colors.white),
             ),
             leading: IconButton(
-              color: Colors.black,
+              color: Colors.white,
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -33,21 +34,16 @@ class PostScreen extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () {
-                  if (postImage != null) {
-                    HomeCubit.get(context).uploadPostImage(
-                        dateTime: DateTime.now().toString(),
-                        postData: postController.text);
-                  } else {
-                    HomeCubit.get(context).createPost(
-                        dateTime: DateTime.now().toString(),
-                        postData: postController.text);
-                  }
-                  HomeCubit.get(context).getPostData();
+                  HomeCubit.get(context).uploadPost(
+                      dateTime: DateTime.now().toString(),
+                      postData: postController.text);
+
+                  HomeCubit.get(context).currentIndex = 0;
                   Navigator.pop(context);
                 },
                 child: const Text(
                   'Post',
-                  style: TextStyle(color: Colors.blue),
+                  style: TextStyle(color: Colors.white),
                 ),
               )
             ],
@@ -63,10 +59,9 @@ class PostScreen extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    const CircleAvatar(
+                    CircleAvatar(
                       radius: 25,
-                      backgroundImage: NetworkImage(
-                          'https://img.freepik.com/free-photo/medium-shot-woman-wearing-vr-glasses_23-2150394457.jpg?w=996&t=st=1689553940~exp=1689554540~hmac=3018f2d54c6fec55cb1f74616978f29363aaf6ab3a57f7484ac6d06a56dec1ad'),
+                      backgroundImage: NetworkImage(userModel!.image!),
                     ),
                     const SizedBox(
                       width: 15,
@@ -75,17 +70,17 @@ class PostScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Row(
+                          Row(
                             children: [
                               Text(
-                                'Mostafa Ahmed',
-                                style: TextStyle(height: 1.4),
+                                userModel.name!,
+                                style: const TextStyle(height: 1.4),
                                 // الهايت دا كويس لو حطيته 1 هيعملك مسافه من تحت كدا شويه  لو زاد عن 1   بينزلك اصلا كل التكيست من فوق بدل البادج يعني
                               ),
                             ],
                           ),
                           Text(
-                            'January 21, 2021 at 11:00 pm',
+                            DateTime.now().toString(),
                             style: Theme.of(context)
                                 .textTheme
                                 .bodySmall!

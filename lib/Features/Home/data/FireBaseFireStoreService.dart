@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 import '../../../core/constants.dart';
 import '../../Auth/data/UserModel.dart';
+import 'PostModel.dart';
 
 class FireBaseFireStoreService {
 ////////////////////////////
@@ -69,4 +70,43 @@ class FireBaseFireStoreService {
   }
 ////////////////////////////
 ///////////////////////////
+
+  static Future<String?> uploadPostImage({required File? postImage}) async {
+    var value = await FirebaseStorage.instance
+        .ref()
+        .child('posts/${Uri.file(postImage!.path).pathSegments.last}')
+        .putFile(postImage);
+    return await value.ref.getDownloadURL();
+  }
+
+  ////////////////////////////
+///////////////////////////
+  static void createPost({
+    required String dateTime,
+    required String postData,
+    String? postImage,
+    required UserModel userModel,
+  }) async {
+    PostModel postModel = PostModel(
+        name: userModel.name,
+        uId: userModel.uId,
+        image: userModel.image,
+        dateTime: dateTime,
+        postData: postData,
+        postImage: postImage ?? 'empty');
+// الفرق بين  الست والادد ان الست بيشتغل ع الدوك معين ويحط تحته الداتا لكن الادد  بيعمل دوك عشوائي ويحط الداتا
+    await FirebaseFirestore.instance.collection('posts').add(postModel.toMap());
+  }
+
+  ////////////////////////////
+///////////////////////////
+  static Future<List<PostModel>> getPostData() async {
+    List<PostModel> posts = [];
+    var postList = await FirebaseFirestore.instance.collection('posts').get();
+
+    for (var element in postList.docs) {
+      posts.add(PostModel.fromJson(element.data()));
+    }
+    return posts;
+  }
 }

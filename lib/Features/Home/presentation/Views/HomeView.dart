@@ -1,12 +1,13 @@
 import 'package:firebasepro/Features/Home/presentation/Manger/HomeStates.dart';
-import 'package:firebasepro/Features/Home/presentation/Views/widgets/PostScreen.dart';
 
 import 'package:firebasepro/core/Styles.dart';
+import 'package:firebasepro/core/globalMethods.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icon_broken/icon_broken.dart';
 
 import '../Manger/HomeCubit.dart';
+import 'Post/PostScreen.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -16,14 +17,7 @@ class HomeView extends StatelessWidget {
     return BlocConsumer<HomeCubit, HomeStates>(
       listener: (context, state) {
         if (state is ChangePostState) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return PostScreen();
-              },
-            ),
-          );
+          GlobalMethod.navigato(context, view: PostScreen());
         }
       },
       builder: (context, state) {
