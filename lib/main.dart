@@ -38,7 +38,7 @@ class FireBasePro extends StatelessWidget {
         ..getPostData(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: startWidget,
+        home: AuthView(),
       ),
     );
   }

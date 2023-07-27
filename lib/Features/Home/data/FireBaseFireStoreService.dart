@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebasepro/Features/Home/data/PostData.dart';
 
 import '../../../core/constants.dart';
 import '../../Auth/data/UserModel.dart';
+import 'ChatModel.dart';
+import 'CommentModel.dart';
 import 'PostModel.dart';
 
 class FireBaseFireStoreService {
@@ -100,13 +103,133 @@ class FireBaseFireStoreService {
 
   ////////////////////////////
 ///////////////////////////
-  static Future<List<PostModel>> getPostData() async {
+  static Future<PostData> getPostData() async {
     List<PostModel> posts = [];
+    List<String>? postsId = [];
+    List<int> likes = [];
     var postList = await FirebaseFirestore.instance.collection('posts').get();
 
     for (var element in postList.docs) {
       posts.add(PostModel.fromJson(element.data()));
+      var value = await element.reference.collection('Likes').get();
+      likes.add(value.docs.length);
+      postsId.add(element.id);
     }
-    return posts;
+    return PostData(posts: posts, postsId: postsId, likes: likes);
+  }
+
+  static void likePosts({String? postId, required UserModel userModel}) async {
+    await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('Likes')
+        .doc(userModel.uId)
+        .set({'Like': true});
+  }
+
+  static void commentPost(
+      {String? postId, required String comment, required UserModel userModel}) {
+    CommentModel commentModel = CommentModel(
+        name: userModel.name,
+        dateTime: DateTime.now().toString(),
+        image: userModel.image,
+        commentData: comment,
+        uId: userModel.uId);
+
+    FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('comments')
+        .add(
+          commentModel.toMap(),
+        );
+  }
+
+  static Future<List<CommentModel>> getComments(
+      {required String? postId}) async {
+    List<CommentModel>? commentModel = [];
+    var value = await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('comments')
+        .get();
+
+    for (var element in value.docs) {
+      commentModel.add(CommentModel.fromJson(element.data()));
+    }
+    return commentModel;
+  }
+
+  static Future<List<UserModel>> getALLUsers(
+      {required UserModel userModel}) async {
+    List<UserModel>? chats = [];
+
+    if (chats.isEmpty) {
+      var value = await FirebaseFirestore.instance.collection('users').get();
+      for (var element in value.docs) {
+        if (userModel.uId == element.data()['uId']) {
+          continue;
+        }
+        chats.add(UserModel.fromJson(element.data()));
+      }
+    }
+    return chats;
+  }
+
+  static void sendMessage({
+    required String dateTime,
+    required String text,
+    required String recieverId,
+    required UserModel userModel,
+  }) async {
+    ChatModel chatModel = ChatModel(
+      text: text,
+      dataTime: dateTime,
+      recieverId: recieverId,
+      senderId: userModel.uId,
+    );
+    // my chat
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userModel.uId)
+        .collection('chats')
+        .doc(recieverId)
+        .collection('messages')
+        .add(chatModel.toMap());
+    // his chat
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(recieverId)
+        .collection('chats')
+        .doc(userModel.uId)
+        .collection('messages')
+        .add(chatModel.toMap());
+  }
+
+  static Future<List<ChatModel>> getMessage(
+      {required String recieverId, required UserModel userModel}) async {
+    List<ChatModel>? messages = [];
+
+    // الفويتشر هي داتا جايه كمان شويه لكن الستريم  هي طابور من الفيوتشر الي جايه كمان شويه  يعني هتبقي ريل تايم بمجرد ما تعمل حاجه هيدهلك علطلول
+    // الفيوتشر بيجيب الداتا مره واحده كل ما تقوله ويقف  لكن الستريك مجرد ما تقوله هات الداتا مره هيبفضل متابع لها اي تغيير يجيبه تاني
+    // بس خد بالك الليسن مجرد ما حاجه جديده تحصل هيلسن من الاول خالص  ف هيديك القديم تاني والجديد وهكئا ف لازم تصفر الليسته
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userModel.uId)
+        .collection('chats')
+        .doc(recieverId)
+        .collection('messages')
+        .orderBy('dataTime')
+        .snapshots()
+        .listen((event) {
+      if (event.docs.isNotEmpty) {
+        var lastDocument = event.docs.last;
+
+        messages.add(ChatModel.fromJson(lastDocument.data()));
+      }
+    });
+    // الستريم مفيهوش سكسس وايرور هي حاجه واحده لانه بيلسن جاب جاب مجابش مجابش
+    return messages;
   }
 }
