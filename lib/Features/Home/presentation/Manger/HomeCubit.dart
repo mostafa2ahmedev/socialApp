@@ -20,12 +20,15 @@ import '../Views/widgets/Feeds.dart';
 import '../Views/widgets/Users.dart';
 
 class HomeCubit extends Cubit<HomeStates> {
-  HomeCubit() : super(GetUserInitialState());
+  HomeCubit() : super(HomeInitailState());
 
   static HomeCubit get(context) => BlocProvider.of(context);
 //////////////////////////////////////////
 /////////////////////////////////////////
   var picker = ImagePicker();
+  void resetHomeCubit() {
+    emit(HomeInitailState());
+  }
 
   int currentIndex = 0;
   List<Widget> scareens = [
