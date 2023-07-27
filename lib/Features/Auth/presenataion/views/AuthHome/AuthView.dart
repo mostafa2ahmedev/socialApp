@@ -10,7 +10,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AuthView extends StatelessWidget {
-  AuthView({super.key});
+  AuthView({
+    super.key,
+  });
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneContorller = TextEditingController();
 

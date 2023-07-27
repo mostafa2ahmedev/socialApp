@@ -1,3 +1,4 @@
+import 'package:firebasepro/Features/Auth/presenataion/views/AuthHome/AuthView.dart';
 import 'package:firebasepro/Features/Home/presentation/Views/Settings/CustomRowInfo.dart';
 import 'package:firebasepro/Features/Home/presentation/Views/Settings/EditProfile.dart';
 import 'package:firebasepro/core/globalMethods.dart';
@@ -5,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icon_broken/icon_broken.dart';
 
+import '../../../../Auth/presenataion/Manger/AuthCubit.dart';
 import '../../Manger/HomeCubit.dart';
 import '../../Manger/HomeStates.dart';
 
 class SettingsView extends StatelessWidget {
-  const SettingsView({super.key});
-
+  const SettingsView({super.key, this.authcubit, this.homecubit});
+  final AuthCubit? authcubit;
+  final HomeCubit? homecubit;
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeCubit, HomeStates>(
@@ -97,6 +100,29 @@ class SettingsView extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              InkWell(
+                onTap: () {
+                  HomeCubit.get(context).resetHomeCubit();
+                  GlobalMethod.navigatoReb(context, view: AuthView());
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'LOG OUT',
+                      style: TextStyle(color: Colors.red, fontSize: 20),
+                    ),
+                    Icon(
+                      Icons.exit_to_app_outlined,
+                      size: 50,
+                      color: Colors.red,
+                    )
+                  ],
+                ),
               )
             ],
           ),

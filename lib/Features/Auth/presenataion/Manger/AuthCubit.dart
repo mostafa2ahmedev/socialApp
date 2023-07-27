@@ -1,4 +1,5 @@
 import 'package:firebasepro/Features/Auth/presenataion/Manger/AuthCubitStates.dart';
+import 'package:firebasepro/core/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,6 +12,11 @@ class AuthCubit extends Cubit<AuthStates> {
   IconData visibility = Icons.visibility_off;
   bool isVisibility = true;
 //////////////////////
+
+  void resetAuthCubit() {
+    emit(AuthInitialState());
+  }
+
   void changeVisibilityMode() {
     // كنا ممكن نعملها بطريقه تانيه عن طريق متغير واحد بس ترو وفولس
     // وهناك هنعمل كوندش الي هي ع الباراميتر نفسه  لو بترو  يبقي كذا ولو فولس يبقي كذا
@@ -58,7 +64,8 @@ class AuthCubit extends Cubit<AuthStates> {
     try {
       var userCredential = await authService.userLoginWithEmail(
           password: password, email: email);
-      print(userCredential.user!.uid);
+      uId = userCredential.user!.uid;
+
       emit(LoginSuccessState(userCredential.user!.uid));
     } catch (error) {
       emit(LoginFailureState(error.toString()));

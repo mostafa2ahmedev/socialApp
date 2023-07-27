@@ -19,7 +19,7 @@ class BuildChatItem extends StatelessWidget {
         );
       },
       child: Padding(
-        padding: const EdgeInsets.only(top: 200),
+        padding: const EdgeInsets.only(top: 20),
         child: Row(
           children: [
             CircleAvatar(

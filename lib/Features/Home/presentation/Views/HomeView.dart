@@ -14,63 +14,73 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeCubit, HomeStates>(
-      listener: (context, state) {
-        if (state is ChangePostState) {
-          GlobalMethod.navigato(context, view: PostScreen());
-        }
-      },
-      builder: (context, state) {
-        var cubit = HomeCubit.get(context);
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              cubit.titles[cubit.currentIndex],
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  fontFamily: 'Janna'),
-            ),
-            titleTextStyle: Styles.titleStyleLight,
-            backgroundColor: Colors.white,
-            elevation: 0,
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(IconBroken.Notification),
+    return BlocProvider(
+      create: (context) => HomeCubit()
+        ..getUserData()
+        ..getPostData(),
+      child: BlocConsumer<HomeCubit, HomeStates>(
+        listener: (context, state) {
+          if (state is ChangePostState) {
+            GlobalMethod.navigato(context, view: PostScreen());
+          }
+        },
+        builder: (context, state) {
+          var cubit = HomeCubit.get(context);
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                cubit.titles[cubit.currentIndex],
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    fontFamily: 'Janna'),
+              ),
+              leading: const Icon(
+                IconBroken.Arrow___Left_2,
                 color: Colors.black,
               ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(IconBroken.Search),
-                color: Colors.black,
-              )
-            ],
-          ),
-          body: cubit.scareens[cubit.currentIndex],
-          bottomNavigationBar: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              selectedItemColor: Colors.blue,
-              elevation: 20,
-              unselectedItemColor: Colors.grey,
-              currentIndex: cubit.currentIndex,
-              onTap: (value) {
-                cubit.changeBottomNav(value);
-              },
-              items: const [
-                BottomNavigationBarItem(
-                    icon: Icon(IconBroken.Home), label: 'home'),
-                BottomNavigationBarItem(
-                    icon: Icon(IconBroken.Chat), label: 'Chats'),
-                BottomNavigationBarItem(
-                    icon: Icon(IconBroken.Paper_Upload), label: 'Post'),
-                BottomNavigationBarItem(
-                    icon: Icon(IconBroken.Location), label: 'Location'),
-                BottomNavigationBarItem(
-                    icon: Icon(IconBroken.Setting), label: 'Settings'),
-              ]),
-        );
-      },
+              titleSpacing: 0,
+              titleTextStyle: Styles.titleStyleLight,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              actions: [
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(IconBroken.Notification),
+                  color: Colors.black,
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(IconBroken.Search),
+                  color: Colors.black,
+                )
+              ],
+            ),
+            body: cubit.scareens[cubit.currentIndex],
+            bottomNavigationBar: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                selectedItemColor: Colors.blue,
+                elevation: 20,
+                unselectedItemColor: Colors.grey,
+                currentIndex: cubit.currentIndex,
+                onTap: (value) {
+                  cubit.changeBottomNav(value);
+                },
+                items: const [
+                  BottomNavigationBarItem(
+                      icon: Icon(IconBroken.Home), label: 'home'),
+                  BottomNavigationBarItem(
+                      icon: Icon(IconBroken.Chat), label: 'Chats'),
+                  BottomNavigationBarItem(
+                      icon: Icon(IconBroken.Paper_Upload), label: 'Post'),
+                  BottomNavigationBarItem(
+                      icon: Icon(IconBroken.Location), label: 'Location'),
+                  BottomNavigationBarItem(
+                      icon: Icon(IconBroken.Setting), label: 'Settings'),
+                ]),
+          );
+        },
+      ),
     );
   }
 }

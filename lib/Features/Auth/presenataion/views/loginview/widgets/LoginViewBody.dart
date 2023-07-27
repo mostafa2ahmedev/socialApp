@@ -3,15 +3,13 @@ import 'package:firebasepro/Features/Auth/presenataion/Manger/AuthCubitStates.da
 import 'package:firebasepro/Features/Auth/presenataion/views/AuthHome/AuthButton.dart';
 
 import 'package:firebasepro/Features/Auth/presenataion/views/AuthHome/TextFormField.dart';
-import 'package:firebasepro/core/globalMethods.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../core/Clipper.dart';
-import '../../../../../Home/presentation/Views/HomeView.dart';
-import '../../../../data/Cache,.dart';
 import '../../AuthHome/HaveAccountOrNot.dart';
 import '../../RegisterView/RegisterView.dart';
+import 'ListenerLogin.dart';
 
 class LoginViewBody extends StatelessWidget {
   LoginViewBody({super.key});
@@ -22,24 +20,7 @@ class LoginViewBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthStates>(
       listener: (context, state) {
-        if (state is LoginFailureState) {
-          GlobalMethod.showSnakeBar(context,
-              text: state.error, backGroundColor: Colors.red);
-        }
-        if (AuthCubit.get(context).isLogin == true &&
-            state is LoginSuccessState) {
-          Cache.saveData(key: 'uId', value: state.uId).then(
-            (value) {
-              GlobalMethod.navigatoReb(context, view: const HomeView());
-            },
-          ).catchError(
-            (error) {},
-          );
-        } else if (state is LoginSuccessState) {
-          emailcontroller.clear();
-          passwordcontroller.clear();
-          GlobalMethod.navigatoReb(context, view: const HomeView());
-        }
+        ListenerLogin(state, context, emailcontroller, passwordcontroller);
       },
       builder: (context, state) {
         var cubit = BlocProvider.of<AuthCubit>(context);

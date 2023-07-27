@@ -27,6 +27,8 @@ class GlobalMethod {
       {required String text, required Color backGroundColor}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        dismissDirection: DismissDirection.horizontal,
+        duration: const Duration(milliseconds: 1500),
         elevation: 10,
         backgroundColor: backGroundColor,
         margin: EdgeInsets.only(

@@ -1,6 +1,6 @@
 abstract class HomeStates {}
 
-class GetUserInitialState extends HomeStates {}
+class HomeInitailState extends HomeStates {}
 
 class GetUserLoadingState extends HomeStates {}
 

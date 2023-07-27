@@ -13,11 +13,17 @@ import '../../loginview/loginview.dart';
 
 class RegisterViewBody extends StatelessWidget {
   RegisterViewBody({super.key});
+
   final TextEditingController emailcontroller = TextEditingController();
+
   final TextEditingController passwordcontroller = TextEditingController();
+
   final TextEditingController usercontroller = TextEditingController();
+
   final TextEditingController phonecontroller = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthStates>(
@@ -31,10 +37,9 @@ class RegisterViewBody extends StatelessWidget {
         if (state is RegisterSuccessState) {
           GlobalMethod.showSnakeBar(context,
               text: 'user created successfuly', backGroundColor: Colors.green);
-          GlobalMethod.navigatoReb(
-            context,
-            view: const LoginView(),
-          );
+          Future.delayed(const Duration(milliseconds: 3100), () {
+            GlobalMethod.navigatoReb(context, view: const LoginView());
+          });
         } else if (state is RegisterFailureState) {
           GlobalMethod.showSnakeBar(
             context,
