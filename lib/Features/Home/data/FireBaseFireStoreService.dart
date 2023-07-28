@@ -58,9 +58,9 @@ class FireBaseFireStoreService {
     UserModel usermodel = UserModel(
       email: userModel!.email,
       isEmailVerfied: userModel.isEmailVerfied,
-      name: name!,
-      bio: bio!,
-      phone: phone!,
+      name: name ?? userModel.name,
+      bio: bio ?? userModel.bio,
+      phone: phone ?? userModel.phone,
       uId: userModel.uId,
       image: image ?? userModel.image,
       cover: cover ?? userModel.cover,
@@ -160,20 +160,20 @@ class FireBaseFireStoreService {
     return commentModel;
   }
 
+  static List<UserModel>? chats = [];
+
   static Future<List<UserModel>> getALLUsers(
       {required UserModel userModel}) async {
-    List<UserModel>? chats = [];
-
-    if (chats.isEmpty) {
+    if (chats!.isEmpty) {
       var value = await FirebaseFirestore.instance.collection('users').get();
       for (var element in value.docs) {
         if (userModel.uId == element.data()['uId']) {
           continue;
         }
-        chats.add(UserModel.fromJson(element.data()));
+        chats!.add(UserModel.fromJson(element.data()));
       }
     }
-    return chats;
+    return chats!;
   }
 
   static void sendMessage({
@@ -197,7 +197,7 @@ class FireBaseFireStoreService {
         .collection('messages')
         .add(chatModel.toMap());
     // his chat
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('users')
         .doc(recieverId)
         .collection('chats')
@@ -206,14 +206,13 @@ class FireBaseFireStoreService {
         .add(chatModel.toMap());
   }
 
+  static List<ChatModel>? messages = [];
+
   static Future<List<ChatModel>> getMessage(
       {required String recieverId, required UserModel userModel}) async {
-    List<ChatModel>? messages = [];
-
     // الفويتشر هي داتا جايه كمان شويه لكن الستريم  هي طابور من الفيوتشر الي جايه كمان شويه  يعني هتبقي ريل تايم بمجرد ما تعمل حاجه هيدهلك علطلول
     // الفيوتشر بيجيب الداتا مره واحده كل ما تقوله ويقف  لكن الستريك مجرد ما تقوله هات الداتا مره هيبفضل متابع لها اي تغيير يجيبه تاني
     // بس خد بالك الليسن مجرد ما حاجه جديده تحصل هيلسن من الاول خالص  ف هيديك القديم تاني والجديد وهكئا ف لازم تصفر الليسته
-
     FirebaseFirestore.instance
         .collection('users')
         .doc(userModel.uId)
@@ -223,13 +222,13 @@ class FireBaseFireStoreService {
         .orderBy('dataTime')
         .snapshots()
         .listen((event) {
-      if (event.docs.isNotEmpty) {
-        var lastDocument = event.docs.last;
+      messages = [];
 
-        messages.add(ChatModel.fromJson(lastDocument.data()));
+      for (var element in event.docs) {
+        messages!.add(ChatModel.fromJson(element.data()));
       }
     });
     // الستريم مفيهوش سكسس وايرور هي حاجه واحده لانه بيلسن جاب جاب مجابش مجابش
-    return messages;
+    return messages!;
   }
 }

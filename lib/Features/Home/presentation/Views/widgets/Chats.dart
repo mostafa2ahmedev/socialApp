@@ -20,11 +20,8 @@ class ChatsView extends StatelessWidget {
             ? ListView.separated(
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return BlocProvider(
-                    create: (context) => HomeCubit()..getUserData(),
-                    child: BuildChatItem(
-                      userModel: userModel[index],
-                    ),
+                  return BuildChatItem(
+                    userModel: userModel[index],
                   );
                 },
                 separatorBuilder: (contex, index) {

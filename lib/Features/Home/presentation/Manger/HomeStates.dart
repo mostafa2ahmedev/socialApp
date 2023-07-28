@@ -85,6 +85,8 @@ class CommentPostFailureState extends HomeStates {
 }
 
 //////////// getcomments///////////
+class GetCommentLoadingState extends HomeStates {}
+
 class GetCommentSuccessState extends HomeStates {}
 
 class GetCommentFailureState extends HomeStates {
@@ -112,6 +114,8 @@ class SendMessageFailureState extends HomeStates {
 
   SendMessageFailureState(this.error);
 }
+
+class GetMessageLoadingState extends HomeStates {}
 
 class GetMessageSuccessState extends HomeStates {}
 

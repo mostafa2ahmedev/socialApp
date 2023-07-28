@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../Manger/HomeCubit.dart';
+import 'CommentItem.dart';
 
 class CommentVeiw extends StatelessWidget {
   CommentVeiw({super.key, required this.index});
@@ -17,93 +18,83 @@ class CommentVeiw extends StatelessWidget {
 
         return WillPopScope(
           onWillPop: () async {
-            commentModel.clear();
+            commentModel!.clear();
             Navigator.pop(context);
             return false;
           },
           child: Scaffold(
-              body: Column(
-            children: [
-              commentModel!.isNotEmpty
-                  ? Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: ListView.separated(
-                          separatorBuilder: (context, index) => const SizedBox(
-                            height: 20,
+              body: state is GetCommentLoadingState
+                  ? const Center(child: CircularProgressIndicator())
+                  : Column(
+                      children: [
+                        commentModel!.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: ListView.separated(
+                                  shrinkWrap: true,
+                                  separatorBuilder: (context, index) =>
+                                      const SizedBox(
+                                    height: 30,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    return CommentItem(
+                                      commentModel: commentModel[index],
+                                    );
+                                  },
+                                  itemCount: commentModel.length,
+                                ),
+                              )
+                            : const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 200),
+                                  child: Text('No Comments'),
+                                ),
+                              ),
+                        const Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 20),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundImage: NetworkImage(
+                                  HomeCubit.get(context).userModel!.image ?? '',
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: TextField(
+                                  controller: commentController,
+                                  keyboardType: TextInputType.text,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Write a Comment',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  HomeCubit.get(context).commentPost(
+                                    comment: commentController.text,
+                                    postId:
+                                        HomeCubit.get(context).postsId![index],
+                                  );
+                                  HomeCubit.get(context).getComments(
+                                    postId:
+                                        HomeCubit.get(context).postsId![index],
+                                  );
+                                  commentController.clear();
+                                },
+                                icon: const Icon(Icons.comment_rounded),
+                              )
+                            ],
                           ),
-                          itemBuilder: (context, index) {
-                            return Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 20,
-                                  backgroundImage: NetworkImage(
-                                    '${commentModel[index].image}',
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                  ),
-                                  child: Text(
-                                    '${commentModel[index].commentData}',
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                          itemCount: commentModel.length,
                         ),
-                      ),
-                    )
-                  : const Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 200),
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-              const Spacer(),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 25,
-                      backgroundImage: NetworkImage(
-                        HomeCubit.get(context).userModel!.image ?? '',
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: commentController,
-                        keyboardType: TextInputType.text,
-                        decoration: const InputDecoration(
-                          hintText: 'Write a Comment',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        HomeCubit.get(context).commentPost(
-                          comment: commentController.text,
-                          postId: HomeCubit.get(context).postsId![index],
-                        );
-                      },
-                      icon: const Icon(Icons.comment_rounded),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          )),
+                      ],
+                    )),
         );
       },
     );

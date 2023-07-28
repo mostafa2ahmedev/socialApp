@@ -161,8 +161,6 @@ class HomeCubit extends Cubit<HomeStates> {
 /////////////////////////////////////////
 /////////////////////////////////////////
 
-  File? postImage;
-
   Future<void> getpostImageFromGallary() async {
     try {
       postImage = await MobileService.getPostImageFromGallary();
@@ -177,6 +175,7 @@ class HomeCubit extends Cubit<HomeStates> {
     emit(RemovePostImage());
   }
 
+  File? postImage;
   void uploadPost({
     required String dateTime,
     required String postData,
@@ -195,7 +194,10 @@ class HomeCubit extends Cubit<HomeStates> {
           postImage: image,
           userModel: userModel!);
 
-      FireBaseFireStoreService.getPostData();
+      var postDataa = await FireBaseFireStoreService.getPostData();
+      posts = postDataa.posts;
+      postsId = postDataa.postsId;
+      likes = postDataa.likes;
       emit(CreatePostSuccessState());
     } catch (e) {
       emit(CreatePostFailureState());
@@ -248,9 +250,10 @@ class HomeCubit extends Cubit<HomeStates> {
 ////////////////////////////////
 //////////////////////////////
   List<CommentModel>? commentModel = [];
-  void getComments({required String? postId}) {
+  void getComments({required String? postId}) async {
+    emit(GetCommentLoadingState());
     try {
-      FireBaseFireStoreService.getComments(postId: postId);
+      commentModel = await FireBaseFireStoreService.getComments(postId: postId);
       emit(GetCommentSuccessState());
     } catch (e) {
       emit(GetCommentFailureState(e.toString()));
@@ -289,9 +292,10 @@ class HomeCubit extends Cubit<HomeStates> {
   List<ChatModel>? messages = [];
   void getMessage({
     required String recieverId,
-  }) {
+  }) async {
+    emit(GetMessageLoadingState());
     try {
-      FireBaseFireStoreService.getMessage(
+      messages = await FireBaseFireStoreService.getMessage(
           recieverId: recieverId, userModel: userModel!);
       emit(GetMessageSuccessState());
     } catch (e) {

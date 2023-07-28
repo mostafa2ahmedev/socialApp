@@ -1,5 +1,7 @@
 import 'package:firebasepro/Features/Auth/presenataion/views/AuthHome/AuthView.dart';
+import 'package:firebasepro/Features/Home/presentation/Manger/HomeCubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'Features/Home/presentation/Views/HomeView.dart';
 import 'core/BeforeRunApp.dart';
@@ -29,9 +31,14 @@ class FireBasePro extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: startWidget,
+    return BlocProvider(
+      create: (context) => HomeCubit()
+        ..getUserData()
+        ..getPostData(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: startWidget,
+      ),
     );
   }
 }

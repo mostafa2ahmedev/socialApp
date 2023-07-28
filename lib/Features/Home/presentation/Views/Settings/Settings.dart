@@ -1,4 +1,3 @@
-import 'package:firebasepro/Features/Auth/presenataion/views/AuthHome/AuthView.dart';
 import 'package:firebasepro/Features/Home/presentation/Views/Settings/CustomRowInfo.dart';
 import 'package:firebasepro/Features/Home/presentation/Views/Settings/EditProfile.dart';
 import 'package:firebasepro/core/globalMethods.dart';
@@ -19,6 +18,7 @@ class SettingsView extends StatelessWidget {
     return BlocConsumer<HomeCubit, HomeStates>(
       listener: (context, state) {},
       builder: (context, state) {
+        var cubit = HomeCubit.get(context);
         var usermodel = HomeCubit.get(context).userModel;
         return Padding(
           padding: const EdgeInsets.all(8.0),
@@ -104,26 +104,6 @@ class SettingsView extends StatelessWidget {
               const SizedBox(
                 height: 30,
               ),
-              InkWell(
-                onTap: () {
-                  HomeCubit.get(context).resetHomeCubit();
-                  GlobalMethod.navigatoReb(context, view: AuthView());
-                },
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'LOG OUT',
-                      style: TextStyle(color: Colors.red, fontSize: 20),
-                    ),
-                    Icon(
-                      Icons.exit_to_app_outlined,
-                      size: 50,
-                      color: Colors.red,
-                    )
-                  ],
-                ),
-              )
             ],
           ),
         );
